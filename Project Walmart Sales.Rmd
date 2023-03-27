@@ -1,0 +1,127 @@
+---
+title: "walmart"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(forecast)
+library(partykit)
+library(rpart)
+train <- read.csv("C:\\Users\\Fitzg\\OneDrive\\Documents\\train.csv", header=TRUE)
+```
+
+```{r}
+train$Date <- as.Date(train$Date)
+```
+
+
+```{r}
+ggplot(train, aes(Date, Weekly_Sales)) + geom_line() +facet_wrap(~Dept)
+```
+```{r}
+train$IsHoliday <- as.factor(train$IsHoliday)
+model <- glm(Weekly_Sales ~+temp+CPI, data = train)
+summary(model)
+```
+```{r}
+dept_1 <- train %>%
+  filter(train$Dept == 1)
+
+train.ts <- ts(dept_1$Weekly_Sales, frequency = 52, start = c(2010, 2), end = c(2012, 10))
+train.forecast <- forecast(train.ts)
+plot(train.forecast, main = "Dept 1 Sales Forecast")
+```
+```{r}
+dept_2 <- train %>%
+  filter(train$Dept == 2)
+
+train.ts2 <- ts(dept_2$Weekly_Sales, frequency = 52, start = c(2010, 2), end = c(2012, 10))
+train.forecast2 <- forecast(train.ts2)
+plot(train.forecast2, main = "Dept 2 Sales Forecast")
+```
+```{r}
+dept_3 <- train %>%
+  filter(train$Dept == 3)
+
+train.ts3 <- ts(dept_3$Weekly_Sales, frequency = 52, start = c(2010, 2), end = c(2012, 10))
+train.forecast3 <- forecast(train.ts3)
+plot(train.forecast3, main = "Dept 3 Sales Forecast")
+```
+```{r}
+dept_4 <- train %>%
+  filter(train$Dept == 4)
+
+train.ts4 <- ts(dept_4$Weekly_Sales, frequency = 52, start = c(2010, 2), end = c(2012, 10))
+train.forecast4 <- forecast(train.ts4)
+plot(train.forecast4, main = "Dept 4 Sales Forecast")
+```
+```{r}
+dept_5 <- train %>%
+  filter(train$Dept == 5)
+
+train.ts5 <- ts(dept_5$Weekly_Sales, frequency = 52, start = c(2010, 2), end = c(2012, 10))
+train.forecast5 <- forecast(train.ts5)
+plot(train.forecast5, main = "Dept 5 Sales Forecast")
+```
+Bagging
+```{r}
+set.seed(8675309) 
+train.ct <- rpart (Weekly_Sales ~ +IsHoliday+temp+Fuel_Price+CPI+Unemployment, data = dept_1)
+train.ct.party <- as.party(train.ct)
+plot (train.ct.party)
+```
+```{r}
+set.seed(8675309) 
+train.ct <- rpart (Weekly_Sales ~ +IsHoliday+temp+Fuel_Price+CPI+Unemployment, data = dept_2)
+train.ct.party <- as.party(train.ct)
+plot (train.ct.party)
+```
+
+```{r}
+set.seed(8675309) 
+train.ct <- rpart (Weekly_Sales ~ +IsHoliday+temp+Fuel_Price+CPI+Unemployment, data = dept_3)
+train.ct.party <- as.party(train.ct)
+plot (train.ct.party)
+```
+
+```{r}
+set.seed(8675309) 
+train.ct <- rpart (Weekly_Sales ~ +IsHoliday+temp+Fuel_Price+CPI+Unemployment, data = dept_4)
+train.ct.party <- as.party(train.ct)
+plot (train.ct.party)
+```
+
+```{r}
+set.seed(8675309) 
+train.ct <- rpart (Weekly_Sales ~ +IsHoliday+temp+Fuel_Price+CPI+Unemployment, data = dept_5)
+train.ct.party <- as.party(train.ct)
+plot (train.ct.party)
+```
+
+
+```{r}
+by_date <- train %>%
+  filter(train$IsHoliday == TRUE)
+  
+ggplot(by_date, aes(Date, Weekly_Sales)) + geom_line() +facet_wrap(~Dept)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
